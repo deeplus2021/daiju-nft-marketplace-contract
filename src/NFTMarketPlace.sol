@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./libraries/Counters.sol";
 
 contract NFTMarketplace is ERC721URIStorage {
     using Counters for Counters.Counter;
@@ -50,6 +50,14 @@ contract NFTMarketplace is ERC721URIStorage {
         return listingPrice;
     }
 
+    /**
+     * @notice Returns the NFT market info of particular tokenId
+     */
+    function getMarketItem(uint tokenId) public view returns (MarketItem memory) {
+        MarketItem memory item = idToMarketItem[tokenId];
+        return item;
+    }
+
     /** 
      * @notice Mints a token and lists it in the marketplace
      *
@@ -79,7 +87,7 @@ contract NFTMarketplace is ERC721URIStorage {
         uint256 price
     ) private {
         require(price > 0, "Price must be at least 1 wei");
-        require(msg.value == listingPrice, "Price must be equal to listing price");
+        require(msg.value == listingPrice, "To create NFT, must pay as equal to listing price");
 
         idToMarketItem[tokenId] =  MarketItem(
             tokenId,
